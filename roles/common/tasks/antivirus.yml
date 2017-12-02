@@ -1,0 +1,71 @@
+---
+- name: '[clamav] Install ClamAV'
+  apt:
+    name: clamav
+    state: present
+    update_cache: yes
+- name: '[clamav] Stop freshclam'
+  service:
+    name: clamav-freshclam
+    state: stopped
+- name: '[clamav] Fix log file permissions'
+  file:
+    path: /var/log/clamav/freshclam
+    mode: 600
+    state: touch
+- name: '[clamav] Update definitions'
+  shell: freshclam
+- name: '[clamav] Start clamav updater'
+  service:
+    name: clamav-freshclam
+    state: started
+- name: '[clamav] Change clamav config to log syslog'
+  lineinfile:
+    path: /etc/clamav/freshclam.conf
+    regexp: '^LogSyslog'
+    line: 'LogSyslog true'
+- name: '[clamav] Add crontab entry for clamscan [daily]'
+  cron:
+    name: 'Start clmav daemon daily'
+    special_time: daily
+    job: clamscan -r /
+- name: '[clamav] Add crontab entry for clamscan [reboot]'
+  cron:
+    name: 'Start clmav daemon reboot'
+    reboot: yes
+    job: clamscan -r /
+- name: '[clamav] Add crontab entry for freshclam [daily]'
+  cron:
+    name: 'Start freshclam daily'
+    special_time: daily
+    job: /usr/local/bin/freshclam --quiet
+- name: '[clamav] Add crontab entry for freshclam [reboot]'
+  cron:
+    name: 'Start freshclam reboot'
+    reboot: yes
+    job: /usr/local/bin/freshclam --quiet
+- name: '[rkhunter] Install rkhunter'
+  apt:
+    name: rkhunter
+    state: present
+- name: '[rkhunter] Correct rkhunter values'
+  lineinfile:
+    path: /etc/rkhunter.conf
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  with_items:
+  - { regexp: '^UPDATE_MIRRORS=', line: 'UPDATE_MIRRORS=1' }
+  - { regexp: '^MIRRORS_MODE=', line: 'MIRRORS_MODE=0' }
+  - { regexp: '^WEB_CMD=', line: 'WEB_CMD=""' }
+- name: '[rkhunter] Update rkhunter definitions'
+  shell: rkhunter --update
+- name: '[rkhunter] Add crontab entry for rkhunter [daily]'
+  cron:
+    name: 'Start rkhunter daily'
+    special_time: daily
+    job: rkhunter -c --quiet
+- name: '[rkhunter] Add crontab entry for rkhunter [reboot]'
+  cron:
+    name: 'Start rkhunter on reboot'
+    reboot: yes
+    job: rkhunter -c --quiet

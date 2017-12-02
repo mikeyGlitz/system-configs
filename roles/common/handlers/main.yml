@@ -1,0 +1,5 @@
+---
+- name: start clamav
+  service:
+    name: clamav-freshclam
+    state: restarted

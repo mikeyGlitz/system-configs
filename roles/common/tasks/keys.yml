@@ -1,0 +1,11 @@
+---
+- name: Generate SSH key
+  user:
+    name: pirate
+    generate_ssh_key: yes
+    ssh_key_file: ~/.ssh/id_rsa
+- name: Add key to authorized hosts
+  authorized_key:
+    user: pirate
+    state: present
+    key: "{{ lookup('file', '/home/pirate/.ssh/id_rsa.pub') }}"

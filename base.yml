@@ -1,0 +1,6 @@
+---
+- hosts: pinet
+  remote_user: pirate
+  become: yes
+  roles:
+    - common

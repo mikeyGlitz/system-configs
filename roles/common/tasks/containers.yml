@@ -1,0 +1,19 @@
+---
+- name: '[kubernetes] Register Kubernetes apt key'
+  apt_key:
+    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+    state: present
+- name: '[kubernetes] Make sure kubernetes sources file exists'
+  file:
+    state: touch
+    path: /etc/apt/sources.list.d/kubernetes.list
+- name: '[kubernetes] Add Kubernetes to apt sources'
+  lineinfile:
+    path: /etc/apt/sources.list.d/kubernetes.list
+    state: present
+    line: deb http://apt.kubernetes.io kubernetes-xenial main
+- name: '[kubernetes] Install Kubernetes'
+  apt:
+    name: kubeadm
+    state: present
+    update_cache: yes
