@@ -1,0 +1,28 @@
+---
+- name: Install NFS Server
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  with_items:
+  - nfs-kernel-server
+- name: Make Shares
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: nobody
+    group: nogroup
+    mode: 777
+  with_items:
+  - /media/Toshiba/Shares
+  - /media/Toshiba/Shares/backup
+- name: Add Share to exports file
+  lineinfile:
+    path: /etc/exports
+    line: "{{ item.path }}   {{ item.perms }}"
+  with_items:
+  - { path: '/media/Toshiba/Shares', perms: '192.168.50.0/24(rw,sync,no_subtree_check)' }
+  - { path: '/media/Toshiba/Shares/backup', perms: '192.168.50.0/24(rw,sync,no_subtree_check)' }
+  - { path: '/home', perms: '192.168.50.0/24(rw,sync,no_root_squash,no_subtree_check)' }
+  notify:
+  - restart nfs-server

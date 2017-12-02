@@ -1,0 +1,9 @@
+---
+- include: server.yml
+  when: inventory_hostname in groups['nas']
+- name: Install nfs-common
+  apt:
+    name: nfs-common
+    state: present
+- include: client.yml
+  when: inventory_hostname not in groups['nas']

@@ -1,6 +1,7 @@
 ---
-- hosts: pinet
+- hosts: all
   remote_user: pirate
   become: yes
   roles:
     - common
+    - nfs

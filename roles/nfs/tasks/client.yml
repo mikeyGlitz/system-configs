@@ -1,0 +1,21 @@
+---
+- name: Install autofs
+  apt:
+    name: autofs
+    state: present
+- name: Update autofs master file
+  lineinfile:
+    path: /etc/auto.master
+    line: '/home  /etc/auto.home'
+    state: present
+- name: Ensure autofs home file exists
+  file:
+    path: /etc/auto.home
+    state: touch
+- name: Update entry to autofs home file 
+  lineinfile:
+    path: /etc/auto.home
+    line: '* -fstype=nfs,rw,nosuid,soft 192.168.50.1:/home/&'
+    state: present
+  notify:
+  - restart autofs
