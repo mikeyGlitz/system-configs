@@ -5,3 +5,10 @@
   roles:
     - common
     - nfs
+
+- hosts: kubernetes
+  remote_user: pirate
+  tags:
+    - containers
+  roles:
+    - kubernetes

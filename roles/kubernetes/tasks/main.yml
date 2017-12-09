@@ -1,0 +1,63 @@
+---
+- name: '[kubernetes] Register Kubernetes apt key'
+  apt_key:
+    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+    state: present
+  become: yes
+- name: '[kubernetes] Make sure kubernetes sources file exists'
+  file:
+    state: touch
+    path: /etc/apt/sources.list.d/kubernetes.list
+  become: yes
+- name: '[kubernetes] Add Kubernetes to apt sources'
+  lineinfile:
+    path: /etc/apt/sources.list.d/kubernetes.list
+    state: present
+    line: deb http://apt.kubernetes.io kubernetes-xenial main
+  become: yes
+- name: '[kubernetes] Install Kubernetes'
+  apt:
+    name: kubeadm
+    state: present
+    update_cache: yes
+  become: yes
+- name: '[docker] Install the right docker version'
+  apt:
+    name: docker-engine=17.03.0~ce-0~raspbian-jessie
+    state: present
+  become: yes
+- name: '[kubernetes] Initialize cluster'
+  shell: "kubeadm init --pod-network-cidr={{ pod_ciddr }} | grep \'kubeadm join\'" 
+  register: join_cmd
+  when: inventory_hostname in groups['kubernetes-master']
+  become: yes
+- name: '[kubernetes] Join cluster'
+  shell: "{{ hostvars['192.168.50.1']['join_cmd'].stdout }}"
+  when: inventory_hostname not in groups['kubernetes-master']
+  become: yes
+- name: '[kubernetes] make home folder'
+  file:
+    path: "/home/{{ ansible_user }}/.kube"
+    state: directory
+  when: inventory_hostname in groups['kubernetes-master']
+- name: '[kubernetes] copy config'
+  shell: "cp /etc/kubernetes/admin.conf /home/{{ ansible_user }}/.kube/conf"
+  become: yes
+  when: inventory_hostname in groups['kubernetes-master']
+- name: '[kubernetes] set perms for ~/.kube/conf'
+  file:
+    path: "/home/{{ ansible_user }}/.kube/conf"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    state: file
+  become: yes
+  when: inventory_hostname in groups['kubernetes-master']
+- name: '[kubernetes] Install Flannel'
+  shell: "{{ item }}"
+  with_items:
+#  - curl -sSL https://rawgit.com/coreos/flannel/v0.9.1/Documentation/kube-flannel-rbac.yml | kubectl create -f -
+  - curl -sSL https://rawgit.com/coreos/flannel/v0.9.1/Documentation/kube-flannel.yml | kubectl create -f -
+  when: inventory_hostname in groups['kubernetes-master']
+  environment:
+    KUBECONFIG: "/home/{{ ansible_user }}/.kube/conf"
+  
