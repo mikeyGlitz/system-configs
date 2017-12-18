@@ -1,3 +1,5 @@
 ---
 - include: keys.yml
 - include: antivirus.yml
+- name: Install VIM
+  apt: name=vim state=present

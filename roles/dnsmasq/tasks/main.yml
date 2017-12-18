@@ -1,0 +1,48 @@
+---
+- name: Make dnsmasq folder
+  file:
+    path: /etc/dnsmasq
+    state: directory
+- name: Copy hosts and resolve
+  copy:
+    src: "{{ item }}"
+    dest: "/etc/dnsmasq/{{ item }}"
+  with_items:
+  - 'haus.net.hosts'
+  - 'haus.net.resolv.conf'
+- name: Install dnsmasq
+  apt:
+    name: dnsmasq
+    state: present
+    update_cache: yes
+- name: Update dnsmasq config
+  lineinfile:
+    path: /etc/dnsmasq.conf
+    state: present
+    line: "{{ item }}"
+  with_items:
+  - 'no-resolv'
+  - 'domain-needed'
+  - 'bogus-priv'
+  - 'expand-hosts'
+  - 'local=/haus.net/'
+  - 'domain=haus.net'
+  - 'dhcp-range=192.168.50.50,192.168.50.150,12h'
+  - 'log-facility=/var/log/dnsmasq.log'
+  - 'log-async'
+  - 'log-dhcp'
+  - 'resolv-file=/etc/dnsmasq/haus.net.resolv'
+  - 'addn-hosts=/etc/dnsmasq/haus.net.hosts'
+  - 'no-hosts'
+- name: Add reservations to dnsmasq config
+  lineinfile:
+    path: /etc/dnsmasq.conf
+    state: present
+    line: "dhcp-host={{ item.mac }},{{ item.ip }}"
+  with_items: "{{ dns_hosts }}"
+- name: Set cache settings in dnsmasq config
+  lineinfile:
+    path: /etc/dnsmasq.conf
+    regexp: '^cache-size='
+    line: 'cache-size=10000'
+  notify: restart dnsmasq

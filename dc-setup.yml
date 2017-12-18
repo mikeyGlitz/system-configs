@@ -1,0 +1,12 @@
+---
+- hosts: localhost
+  connection: local
+  user: pirate
+  become: yes
+  tags:
+  - dc
+  - dns
+  - gateway
+  roles:
+  - dnsmasq
+  - gateway

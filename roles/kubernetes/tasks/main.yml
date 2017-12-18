@@ -21,11 +21,11 @@
     state: present
     update_cache: yes
   become: yes
-- name: '[docker] Install the right docker version'
-  apt:
-    name: docker-engine=17.03.0~ce-0~raspbian-jessie
-    state: present
-  become: yes
+# - name: '[docker] Install the right docker version'
+#   apt:
+#     name: docker-engine=17.03.0~ce-0~raspbian-jessie
+#     state: present
+#   become: yes
 - name: '[kubernetes] Initialize cluster'
   shell: "kubeadm init --pod-network-cidr={{ pod_ciddr }} | grep \'kubeadm join\'" 
   register: join_cmd
