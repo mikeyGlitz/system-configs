@@ -1,6 +1,9 @@
 ---
 - name: Set ipv4 forwarding
-  shell: 'sysctl -w net.ipv4.ip_forward=1'
+  lineinfile:
+    path: /etc/sysctl.conf
+    regexp: '^#net.ipv4.ip_forward'
+    line: 'net.ipv4.ip_forward=1'
 - name: Set NAT forwarding
   iptables:
     table: nat
@@ -23,7 +26,12 @@
     jump: ACCEPT
 - name: Save iptables rules
   shell: 'iptables-save > /etc/iptables.ipv4.nat'
-- name: Add iptables rules on restarrt'
+- name: Create iptables file
+  file:
+    path: /etc/network/if-up.d/iptables
+    state: touch
+    mode: u=rwx,g=rx,o=rx
+- name: Add iptables rules on restart
   lineinfile:
     path: /etc/network/interfaces
     line: 'up iptables-restore < /etc/iptables.ipv4.nat'

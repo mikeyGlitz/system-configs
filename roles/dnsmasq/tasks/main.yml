@@ -21,7 +21,6 @@
     state: present
     line: "{{ item }}"
   with_items:
-  - 'no-resolv'
   - 'domain-needed'
   - 'bogus-priv'
   - 'expand-hosts'
