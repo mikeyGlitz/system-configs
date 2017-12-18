@@ -1,4 +1,5 @@
 ---
 dns_hosts:
-- { name: aquila, ip: 192.168.50.60, mac: 'b8:27:eb:e1:41:a7' }
-- { name: morrigan, ip: 192.168.50.62, mac: 'b8:27:eb:2a:90:c' }
+- { name: aquila, ip: 192.168.50.60, mac: 'b8:27:eb:4f:a8:a7' }
+- { name: jackdaw, ip: 192.168.50.61, mac: 'b8:27:eb:e1:41:a7' }
+- { name: morrigan, ip: 192.168.50.62, mac: 'b8:27:eb:2a:90:c0' }
