@@ -13,7 +13,7 @@
     in_interface: eth1
     out_interface: eth0
     match: conntrack
-    cstate: RELATED,ESTABLISHED
+    ctstate: RELATED,ESTABLISHED
     jump: ACCEPT
 - name: Forward eth0 to eth1
   iptables:
