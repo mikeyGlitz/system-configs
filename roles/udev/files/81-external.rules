@@ -1,0 +1,3 @@
+SUBSYSTEMS=="scsi", ATTRS{model}=="BUP Slim BK     ", SYMLINK+="Shared"
+SUBSYSTEMS=="scsi", ATTRS{model}=="External USB 3.0", SYMLINK+="Backup"
+

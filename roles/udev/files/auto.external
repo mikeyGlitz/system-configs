@@ -1,0 +1,3 @@
+Shared		-fstype=ntfs		:/dev/Shared
+Backup		-fstype=ntfs		:/dev/Backup
+

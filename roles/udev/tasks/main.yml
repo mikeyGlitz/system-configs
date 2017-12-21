@@ -1,0 +1,27 @@
+---
+- name: Install packages
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+  - udev
+  - autofs
+  - ntfs-3g
+- name: Copy rules to udev rules
+  copy:
+    src: "81-external.rules"
+    dest: "/etc/udev/rules.d/"
+- name: Restart udev
+  service: name=udev state=restarted
+- name: Copy autofs rules
+  copy:
+    src: "auto.external"
+    dest: "/etc/auto.external"
+- name: Create link to autofs rules
+  lineinfile:
+    path: /etc/auto.master
+    line: "/media	/etc/auto.external"
+    state: present
+- name: Restart autofs
+  service: name=autofs state=restarted
+

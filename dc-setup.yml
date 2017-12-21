@@ -8,5 +8,7 @@
   - dns
   - gateway
   roles:
-  - dnsmasq
+  - { role: dnsmasq, tags: ['dns','networking','dhcp'] }
   - gateway
+  - { role: udev, tags: ['fs','external'] }
+
