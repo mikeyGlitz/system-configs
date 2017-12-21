@@ -55,8 +55,7 @@
 - name: '[kubernetes] Install Flannel'
   shell: "{{ item }}"
   with_items:
-#  - curl -sSL https://rawgit.com/coreos/flannel/v0.9.1/Documentation/kube-flannel-rbac.yml | kubectl create -f -
-  - curl -sSL https://rawgit.com/coreos/flannel/v0.9.1/Documentation/kube-flannel.yml | kubectl create -f -
+  - 'curl -sSL https://rawgit.com/coreos/flannel/v0.9.1/Documentation/kube-flannel.yml | sed "s/amd64/arm/g" | kubectl create -f -'
   when: inventory_hostname in groups['kubernetes-master']
   environment:
     KUBECONFIG: "/home/{{ ansible_user }}/.kube/conf"

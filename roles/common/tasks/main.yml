@@ -1,5 +1,5 @@
 ---
-- include: keys.yml
-- include: antivirus.yml
+- import_tasks: keys.yml
+- import_tasks: antivirus.yml
 - name: Install VIM
   apt: name=vim state=present
