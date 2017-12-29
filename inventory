@@ -1,13 +1,13 @@
 [dc]
 192.168.50.1
 
-[kubernetes]
+[cluster]
 192.168.50.1
 192.168.50.60
 192.168.50.61
 192.168.50.62
 
-[kubernetes-master]
+[swarm-master]
 192.168.50.1
 
 [nas]

@@ -1,0 +1,14 @@
+---
+- name: '[docker] Install docker-compose'
+  apt: name='docker-compose' state=present
+  become: yes
+- name: '[docker-swarm] leave swarm'
+  shell: 'docker swarm leave --force || 0'
+- name: '[docker-swarm] Initialize cluster'
+  shell: "docker swarm init --advertise-addr 192.168.50.1 | grep \'\\-\\-token\' | awk \'{ print $5 }\'" 
+  register: token
+  when: inventory_hostname in groups['swarm-master']
+- name: '[docker-swarm] Join cluster'
+  shell: "docker swarm join --token {{ hostvars['192.168.50.1']['token'].stdout }} 192.168.50.1"
+  when: inventory_hostname not in groups['swarm-master']
+  become: yes

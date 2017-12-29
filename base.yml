@@ -6,9 +6,9 @@
     - common
     - nfs
 
-- hosts: kubernetes
+- hosts: cluster
   remote_user: pirate
   tags:
     - containers
   roles:
-    - kubernetes
+    - docker

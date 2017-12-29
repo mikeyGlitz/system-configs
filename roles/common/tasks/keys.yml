@@ -1,11 +1,11 @@
 ---
 - name: Generate SSH key
   user:
-    name: pirate
+    name: "{{ ansible_user }}"
     generate_ssh_key: yes
-    ssh_key_file: ~/.ssh/id_rsa
+    ssh_key_file: "/home/{{ ansible_user }}/.ssh/id_rsa"
 - name: Add key to authorized hosts
   authorized_key:
     user: pirate
     state: present
-    key: "{{ lookup('file', '/home/pirate/.ssh/id_rsa.pub') }}"
+    key: "{{ lookup('file', '/home/{{ ansible_user }}/.ssh/id_rsa.pub') }}"
